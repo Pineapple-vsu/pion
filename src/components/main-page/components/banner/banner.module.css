@@ -1,0 +1,23 @@
+.banner {
+  height: 800px;
+  background: url("/src/assets/banner.jpg") no-repeat;
+  background-size: contain;
+  background-position: top;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+
+.content {
+  margin-bottom: 100px;
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.button {
+  display: flex;
+  justify-content: start;
+}

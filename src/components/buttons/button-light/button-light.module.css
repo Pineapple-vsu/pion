@@ -1,0 +1,14 @@
+.light {
+  background-color: #d9adc5;
+  color: #000;
+  border-radius: 30px;
+  padding: 20px 40px;
+  font-weight: bold;
+  font-family: "Bellota", sans-serif;
+  font-size: 30px;
+  text-align: center;
+}
+
+.light:hover {
+  text-decoration: underline;
+}

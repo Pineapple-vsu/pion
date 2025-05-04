@@ -1,0 +1,13 @@
+.dark {
+  background-color: #a64178;
+  color: #fff;
+  border-radius: 30px;
+  padding: 10px 40px;
+  font-weight: bold;
+  font-family: "Bellota", sans-serif;
+  font-size: 30px;
+}
+
+.dark:hover {
+  text-decoration: underline;
+}
