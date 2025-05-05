@@ -1,6 +1,12 @@
 // import styles from "./app.module.css";
 import { Route, Routes } from "react-router";
-import { Header, Footer, MainPage, CatalogPage } from "./components";
+import {
+  Header,
+  Footer,
+  MainPage,
+  CatalogPage,
+  FlowerPage,
+} from "./components";
 import ScrollToHash from "./components/scroll-to-hash/ScrollToHash";
 
 function App() {
@@ -9,10 +15,10 @@ function App() {
       <Header></Header>
       <Routes>
         {/* <Route path="/" element={<div>Главная</div>} /> */}
-        <Route path="/" element={<MainPage></MainPage>} />
+        <Route path="/" element={<MainPage />} />
         {/* <Route path="/catalog" element={<div>Каталог</div>} /> */}
-        <Route path="/catalog" element={<CatalogPage></CatalogPage>} />
-        <Route path="/flower/:id" element={<div>цветок</div>} />
+        <Route path="/catalog" element={<CatalogPage />} />
+        <Route path="/flower/:id" element={<FlowerPage />} />
       </Routes>
       <ScrollToHash></ScrollToHash>
       <Footer></Footer>

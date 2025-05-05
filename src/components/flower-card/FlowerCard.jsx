@@ -1,14 +1,15 @@
 import { Children } from "react";
 import { ButtonLight } from "../buttons";
-import styles from "./flower.module.css";
+import styles from "./flower-card.module.css";
 import { Link } from "react-router";
 
-export const Flower = ({ flower: { id, name, img } }) => {
+export const FlowerCard = ({ flower: { id, name, img } }) => {
   return (
     <div className={styles.block}>
-      <div className={styles.image} style={{ backgroundImage: `url(${img})` }}>
-        {/* <img src={img} alt="цветок" /> */}
-      </div>
+      <div
+        className={styles.image}
+        style={{ backgroundImage: `url(${img})` }}
+      ></div>
       <div className={styles.content}>
         <h3>{name}</h3>
         <Link to={`/flower/${id}`}>

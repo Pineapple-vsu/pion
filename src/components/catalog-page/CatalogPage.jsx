@@ -1,8 +1,7 @@
-import { Flower } from "../flower/Flower";
 import styles from "./catalog-page.module.css";
-import { Link } from "react-router";
 import { useEffect, useState } from "react";
 import { ButtonDark } from "../buttons";
+import { FlowerCard } from "../flower-card/FlowerCard";
 
 export const CatalogPage = () => {
   const [flowers, setFlowers] = useState([]);
@@ -31,13 +30,13 @@ export const CatalogPage = () => {
       weeklyFilter,
     });
 
-    let urls = []; // Список запросов
+    let urls = [];
 
     if (nameFilter) {
       urls.push(`/api/flower/search/${nameFilter}`);
     }
     if (typeFilter) {
-      urls.push(`/api/flower/type/${typeFilter}`);
+      urls.push(`/api/flower/type_name/${typeFilter}`);
     }
     if (quantityFilter) {
       urls.push(`/api/flower/stock/${quantityFilter}`);
@@ -57,7 +56,6 @@ export const CatalogPage = () => {
         );
       }
 
-      console.log("Полученные данные от сервера:", filteredFlowers);
       setFlowers(filteredFlowers);
     } catch (error) {
       console.error("Ошибка запроса:", error);
@@ -118,8 +116,8 @@ export const CatalogPage = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        setAllFlowers(data); // Сохраняем оригинальные цветы
-        setFlowers(data); // Отображаемые цветы (меняются при поиске)
+        setAllFlowers(data);
+        setFlowers(data);
       });
   }, []);
 
@@ -143,13 +141,13 @@ export const CatalogPage = () => {
               <h3>Количество на складе:</h3>
               <input
                 type="number"
-                placeholder="2"
+                placeholder="20"
                 value={quantityFilter}
                 onChange={(e) => setQuantityFilter(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch(e)}
               />
             </div>
-            <h3>Название</h3>
+            <h3>Название:</h3>
             <input
               type="text"
               placeholder="Ред гранд"
@@ -175,7 +173,11 @@ export const CatalogPage = () => {
 
           <div className={styles.right}>
             {flowers.map((flower) => (
-              <Flower key={flower.id} flower={flower} />
+              <FlowerCard
+                key={flower.id}
+                flower={flower}
+                {...console.log(flower)}
+              />
             ))}
           </div>
         </div>

@@ -150,7 +150,8 @@ button {
 }
 
 input:not(input[type="checkbox"]),
-textarea {
+textarea,
+select {
   background-color: #fff;
   border-radius: 30px;
   padding: 10px 30px;
@@ -166,6 +167,16 @@ textarea {
   height: 100px;
   padding: 20px 30px;
   resize: vertical;
+}
+
+select option:hover {
+  background-color: #d9adc5 !important; /* Цвет фона при наведении */
+  color: #000; /* Цвет текста */
+}
+
+select option {
+  /* background-color: #d9adc5; Цвет фона при наведении */
+  color: #000; /* Цвет текста */
 }
 
 input[type="checkbox"] {

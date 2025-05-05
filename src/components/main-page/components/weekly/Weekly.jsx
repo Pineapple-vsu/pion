@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { Flower } from "../../../flower/Flower";
+import { FlowerCard } from "../../../flower-card/FlowerCard";
 import styles from "./weekly.module.css";
-import { Link } from "react-router";
 
 export const Weekly = () => {
   const [flowers, setFlowers] = useState([]);
@@ -26,7 +25,7 @@ export const Weekly = () => {
 
         <div className={styles.list}>
           {flowers.map((flower) => (
-            <Flower key={flower.id} flower={flower} />
+            <FlowerCard key={flower.id} flower={flower} />
           ))}
         </div>
       </div>

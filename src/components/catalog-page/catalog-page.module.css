@@ -1,12 +1,13 @@
 .catalog {
   padding: 60px 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
 }
 
 .left {
   display: flex;
   flex-direction: column;
-  align-items: start;
-  justify-content: start;
   width: 30%;
   gap: 20px;
   background-color: #d9adc5;
@@ -15,7 +16,8 @@
   height: max-content;
 }
 
-.left * {
+.left h3,
+.left label {
   color: #000;
 }
 
