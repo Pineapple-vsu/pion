@@ -53,3 +53,8 @@
   justify-content: start;
   gap: 20px;
 }
+
+.results {
+  display: flex;
+  justify-content: space-between;
+}
