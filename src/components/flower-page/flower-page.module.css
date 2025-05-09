@@ -44,5 +44,12 @@
 }
 
 .amount {
-  font-size: 35px;
+  font-size: 30px;
+}
+
+.packages {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 20px;
 }

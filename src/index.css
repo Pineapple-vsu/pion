@@ -94,14 +94,23 @@
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
 }
-#root {
-  width: 100%;
-}
-body {
+
+body,
+html {
   margin: 0;
   display: flex;
+  min-height: 100%;
 }
 
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+#root > section,
+#root > form {
+  flex: 1;
+}
 * {
   box-sizing: border-box;
   margin: 0;
@@ -149,7 +158,7 @@ button {
   cursor: pointer;
 }
 
-input:not(input[type="checkbox"]),
+input:not(input[type="checkbox"]):not(input[type="radio"]),
 textarea,
 select {
   background-color: #fff;
@@ -205,4 +214,24 @@ label {
   font-size: 20px;
   font-family: "Bellota", system-ui;
   font-weight: bold;
+}
+
+/* Сброс стандартного вида */
+input[type="radio"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-right: 5px;
+  position: relative;
+  outline: none;
+}
+
+input[type="radio"]:checked {
+  background-color: #d9adc5;
+  border-color: #d9adc5;
 }

@@ -1,59 +1,16 @@
-// import { useEffect, useState } from "react";
-// import { useParams } from "react-router-dom";
-// import styles from "./flower-page.module.css";
-
-// export const FlowerPage = () => {
-//   const { id } = useParams();
-//   const [flower, setFlower] = useState(null);
-
-//   useEffect(() => {
-//     fetch(`/api/flower/${id}`)
-//       .then((res) => res.json())
-//       .then((data) => {
-//         console.log("Полученные данные:", data);
-//         setFlower(data);
-//       })
-//       .catch((error) => console.error("Ошибка загрузки:", error));
-//   }, [id]);
-
-//   if (!flower) {
-//     return <p>Загрузка данных...</p>;
-//   }
-
-//   return (
-//     <section>
-//       <div className={styles.flower_page}>
-//         <h2>Информация по цветку</h2>
-//         <div className={styles.content}>
-//           <img src={flower.img} alt={flower.name} />
-//           <h3>Название: {flower.name}</h3>
-//           <h3>Тип: {flower.flower_type_id}</h3>
-//           <label htmlFor="amount">Количество</label>
-//           <input type="number" id="amount" />
-//           <input type="checkbox" id="package" />
-//           <label htmlFor="package">Упаковка</label>
-//         </div>
-//         <div className={styles.description}>
-//           <h3>Описание:</h3>
-//           <p>{flower.description}</p>
-//           <h3>Рекомендации по уходу:</h3>
-//           <p>{flower.description}</p>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// };
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styles from "./flower-page.module.css";
+import { Loader } from "../loader/Loader";
 
 export const FlowerPage = () => {
   const { id } = useParams();
   const [flower, setFlower] = useState(null);
   const [recommendation, setRecommendation] = useState(null);
   const [packages, setPackages] = useState([]);
-  const [selectedPackage, setSelectedPackage] = useState("");
+  // const [selectedPackage, setSelectedPackage] = useState("");
   const [typeName, setTypeName] = useState("");
+  // const [showPackageOptions, setShowPackageOptions] = useState(false);
 
   useEffect(() => {
     // Загружаем данные о цветке
@@ -75,14 +32,17 @@ export const FlowerPage = () => {
 
     fetch(`/api/flower/${id}/type_name`)
       .then((res) => res.json())
-      .then((data) => setTypeName(data.type_name)) // Теперь `type_name` приходит корректно!
+      .then((data) => setTypeName(data.type_name))
       .catch((error) => console.error("Ошибка загрузки типа цветка:", error));
   }, [id]);
 
   if (!flower || !recommendation) {
-    return <p>Загрузка...</p>;
+    return <Loader></Loader>;
   }
-
+  const handleQuantityChange = (e) => {
+    const value = parseInt(e.target.value, 10);
+    setQuantity(isNaN(value) ? 1 : value);
+  };
   return (
     <section>
       <div className={styles.flower_page}>
@@ -101,50 +61,32 @@ export const FlowerPage = () => {
             <h3 className={styles.amount}>
               Тип: {typeName?.flower_type?.name || "Неизвестный тип"}
             </h3>
-
+            <div className={styles.description}>
+              <h3>
+                Описание:<p>{flower.description}</p>
+              </h3>
+            </div>
             <label htmlFor="amount" className={styles.amount}>
               Количество:
             </label>
             <input type="number" id="amount" />
 
-            <input type="checkbox" id="need_pack" />
-            <label htmlFor="need_pack" className={styles.amount}>
-              Упаковка
-            </label>
+            {/* <input type="checkbox" id="need_pack" /> */}
+            <h3>Упаковка</h3>
 
-            {/* <select
-              id="package"
-              value={selectedPackage}
-              onChange={(e) => setSelectedPackage(e.target.value)}
-            >
-              <option value="">Выберите упаковку</option>
-              {packages.map((pkg) => (
-                <option key={pkg.id} value={pkg.id}>
-                  {pkg.material}
-                </option>
-              ))}
-            </select> */}
-            <form className={styles.package_list}>
-              {packages.map((pkg) => (
-                <div key={pkg.id} className={styles.package_item}>
-                  <input
-                    type="radio"
-                    id={`package-${pkg.id}`}
-                    name="package"
-                    value={pkg.id}
-                    checked={selectedPackage === pkg.id}
-                    onChange={() => setSelectedPackage(pkg.id)}
-                  />
-                  <label htmlFor={`package-${pkg.id}`}>{pkg.material}</label>
-                </div>
-              ))}
-            </form>
+            {packages.map((pkg) => (
+              <div key={pkg.id} className={styles.packages}>
+                <input
+                  type="radio"
+                  name="package"
+                  id={`pac-${pkg.id}`}
+                  value={pkg.id}
+                  defaultChecked={pkg.id === 1}
+                />
+                <label htmlFor={`pac-${pkg.id}`}>{pkg.name}</label>
+              </div>
+            ))}
           </div>
-        </div>
-
-        <div className={styles.description}>
-          <h2>Описание:</h2>
-          <p>{flower.description}</p>
         </div>
 
         <div className={styles.description}>

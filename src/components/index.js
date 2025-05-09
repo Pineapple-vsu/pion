@@ -5,3 +5,4 @@ export * from "./flower-card/FlowerCard";
 export * from "./form/Form";
 export * from "./catalog-page/CatalogPage";
 export * from "./flower-page/FlowerPage";
+export * from "./loader/Loader";
