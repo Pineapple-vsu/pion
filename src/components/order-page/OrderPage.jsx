@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ButtonDark } from "../buttons";
 import styles from "./order-page.module.css";
@@ -5,12 +6,14 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Form } from "../form/Form";
+import { useLocation } from "react-router-dom";
 
+// Рассчитаем завтрашнюю дату (без времени)
 const tomorrow = new Date();
 tomorrow.setDate(tomorrow.getDate() + 1);
-// Обнуляем время (если нужно сравнивать только дату)
 tomorrow.setHours(0, 0, 0, 0);
 
+// Схема валидации (все сообщения на русском)
 const schema = yup.object().shape({
   personName: yup.string().required("Введите имя"),
   personPhone: yup
@@ -23,7 +26,6 @@ const schema = yup.object().shape({
   deliveryDate: yup
     .date()
     .typeError("Выберите дату доставки")
-    // Минимальная дата обязана быть не раньше завтрашнего дня
     .min(tomorrow, "Дата должна быть не раньше завтрашнего дня")
     .required("Выберите дату доставки"),
   deliveryTime: yup.string().required("Выберите время доставки"),
@@ -31,7 +33,13 @@ const schema = yup.object().shape({
   personAddress: yup.string().required("Введите адрес"),
   agree: yup.boolean().oneOf([true], "Необходимо согласие"),
 });
+
 export const OrderPage = () => {
+  // Состояние, показывающее, что форма успешно отправлена
+  const [submitted, setSubmitted] = useState(false);
+  const { state } = useLocation();
+  const posyId = state?.posyId; // Получаем posyId, переданный с FlowerPage
+
   const {
     register,
     handleSubmit,
@@ -43,10 +51,83 @@ export const OrderPage = () => {
 
   const onSubmit = (data) => {
     console.log("Форма отправлена", data);
-    alert("Заказ успешно оформлен!");
-    // Здесь можно отправить данные на сервер (например, fetch или axios).
+
+    // Преобразуем дату доставки: если deliveryDate уже объект Date, то извлекаем строку "YYYY-MM-DD"
+    let deliveryDateStr;
+    if (data.deliveryDate instanceof Date) {
+      deliveryDateStr = data.deliveryDate.toISOString().split("T")[0];
+    } else {
+      deliveryDateStr = data.deliveryDate;
+    }
+
+    // Если время содержит только часы и минуты, добавляем секунды
+    let deliveryTimeStr = data.deliveryTime;
+    if (deliveryTimeStr.split(":").length === 2) {
+      deliveryTimeStr += ":00";
+    }
+
+    // Объединяем дату и время в строку ISO
+    const orderDateTime = new Date(
+      `${deliveryDateStr}T${deliveryTimeStr}`
+    ).toISOString();
+
+    // Формируем объект заказа в соответствии с моделью Order,
+    // подставляя полученный posyId вместо null
+    const orderPayload = {
+      order_data: orderDateTime,
+      status_id: 1, // По умолчанию "Ожидается обработка"
+      posy_id: posyId, // Используем posyId, полученный с предыдущей страницы
+      telephone: data.personPhone,
+      name_people: data.personName,
+      delivery: data.addressType === "delivery",
+      address: data.personAddress,
+    };
+    console.log("Проверка заказа:", orderPayload);
+
+    fetch("/api/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(orderPayload),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Ошибка при создании заказа: " + response.status);
+        }
+        return response.json();
+      })
+      .then((orderData) => {
+        console.log("Заказ создан успешно", orderData);
+        setSubmitted(true);
+      })
+      .catch((error) => {
+        console.error("Ошибка создания заказа:", error);
+        alert("Ошибка создания заказа. Попробуйте ещё раз.");
+      });
   };
 
+  // Если заказ создан успешно, отображаем экран подтверждения
+  if (submitted) {
+    return (
+      <Form>
+        <div className={styles.container}>
+          <div className={styles.image}></div>
+          <div className={styles.right}>
+            <h2>Заказ оформлен!</h2>
+            <p>Спасибо за покупку!</p>
+          </div>
+        </div>
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <ButtonDark onClick={() => setSubmitted(false)}>
+            Вернуться на главную
+          </ButtonDark>
+        </Link>
+      </Form>
+    );
+  }
+
+  // Отображаем форму для создания заказа
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Form className={styles.form}>
@@ -54,6 +135,7 @@ export const OrderPage = () => {
           <div className={styles.form_header}>
             <h2>Оформление заказа</h2>
           </div>
+
           <div className={styles.row}>
             <label htmlFor="personName" className={styles.labelText}>
               Ваше имя
@@ -68,6 +150,7 @@ export const OrderPage = () => {
               <p className={styles.error}>{errors.personName.message}</p>
             )}
           </div>
+
           <div className={styles.row}>
             <label htmlFor="personPhone" className={styles.labelText}>
               Номер телефона
@@ -82,6 +165,7 @@ export const OrderPage = () => {
               <p className={styles.error}>{errors.personPhone.message}</p>
             )}
           </div>
+
           <div className={styles.row}>
             <label className={styles.labelText}>
               Время, к которому нужно доставить букет*
