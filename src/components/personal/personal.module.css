@@ -1,0 +1,10 @@
+.personal ul {
+  margin: 0 40px;
+}
+
+.personal {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 60px 0;
+}

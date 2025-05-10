@@ -7,3 +7,4 @@ export * from "./catalog-page/CatalogPage";
 export * from "./flower-page/FlowerPage";
 export * from "./order-page/OrderPage";
 export * from "./loader/Loader";
+export * from "./personal/Personal";

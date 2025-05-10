@@ -1,80 +1,3 @@
-// // import { useEffect, useState } from "react";
-// // import { FlowerCard } from "../../../flower-card/FlowerCard";
-// import { Link } from "react-router";
-// import { ButtonDark } from "../buttons";
-// import { Form } from "../form/Form";
-// import styles from "./order-page.module.css";
-
-// export const OrderPage = () => {
-//   return (
-//     <Form>
-//       <div className={styles.content}>
-//         <div className={styles.form_header}>
-//           <h2>Оформление заказа</h2>
-//         </div>
-//         <div className={styles.row}>
-//           <label htmlFor="personName" className={styles.lableText}>
-//             Ваше имя
-//           </label>
-//           <input type="text" id="personName" placeholder="Имя" />
-//         </div>
-//         <div className={styles.row}>
-//           <label htmlFor="personPhone" className={styles.lableText}>
-//             Номер телефона
-//           </label>
-//           <input
-//             type="tel"
-//             id="personPhone"
-//             placeholder="+375 (29) 000 00 00"
-//           />
-//         </div>
-//         <div className={styles.row}>
-//           <label className={styles.lableText}>
-//             Время, к которому нужно доставить букет*
-//           </label>
-//           <div className={styles.datetime}>
-//             <input type="date" />
-//             <input type="time" />
-//           </div>
-//         </div>
-//         <div className={styles.row}>
-//           <label className={styles.lableText} htmlFor="personAddress">
-//             Адрес
-//           </label>
-
-//           <div className={styles.address}>
-//             <div className={styles.radio}>
-//               <input type="radio" id="personPhone" name="address" />
-//               <label htmlFor="delivery" className={styles.lableText}>
-//                 доставка
-//               </label>
-//             </div>
-//             <div className={styles.radio}>
-//               <input type="radio" id="personPhone" name="address" />
-//               <label htmlFor="delivery" className={styles.lableText}>
-//                 самовывоз
-//               </label>
-//             </div>
-//           </div>
-//           <input type="text" id="personAddress" placeholder="Адрес" />
-//         </div>
-//         <div className={styles.row}>
-//           <input type="checkbox" id="agree" className={styles.check} />
-//           <label htmlFor="agree" className={styles.lableText}>
-//             Я согласен на обработку
-//             <Link to="/personal"> персональных данных</Link>
-//           </label>
-//         </div>
-//         <span>*букет будет доставлен в течение часа</span>
-//         <div>
-//           <button type="submit">
-//             <ButtonDark>Отправить</ButtonDark>
-//           </button>
-//         </div>
-//       </div>
-//     </Form>
-//   );
-// };
 import { Link } from "react-router-dom";
 import { ButtonDark } from "../buttons";
 import styles from "./order-page.module.css";
@@ -82,8 +5,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Form } from "../form/Form";
-
-// Схема валидации (все сообщения на русском)
 
 const tomorrow = new Date();
 tomorrow.setDate(tomorrow.getDate() + 1);
@@ -185,7 +106,6 @@ export const OrderPage = () => {
             )}
           </div>
 
-          {/* Радиокнопки для выбора способа получения */}
           <div className={styles.row}>
             <label className={styles.labelText}>Способ получения</label>
             <div className={styles.address}>
@@ -217,7 +137,6 @@ export const OrderPage = () => {
             )}
           </div>
 
-          {/* Поле адреса всегда отображается */}
           <div className={styles.row}>
             <label htmlFor="personAddress" className={styles.labelText}>
               Адрес
