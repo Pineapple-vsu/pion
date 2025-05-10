@@ -107,10 +107,10 @@ html {
   min-height: 100%;
 }
 
-#root > section,
+/* #root > section,
 #root > form {
   flex: 1;
-}
+} */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -160,7 +160,7 @@ button {
 
 input:not(input[type="checkbox"]):not(input[type="radio"]),
 textarea,
-select {
+input[type="text"] {
   background-color: #fff;
   border-radius: 30px;
   padding: 10px 30px;

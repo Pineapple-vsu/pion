@@ -17,7 +17,8 @@
 .content p,
 .content a,
 .content h2,
-.content h3 {
+.content h3,
+.content label {
   color: #000;
 }
 .text_link {
@@ -34,4 +35,24 @@
 
 .lableText {
   color: #000;
+}
+
+.content > div > div:not(:first-child):not(:last-child) {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+.content > div {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.content label {
+  margin-bottom: 10px;
+}
+
+.content a {
+  text-decoration: underline;
 }
