@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import styles from "./flower-page.module.css";
 import { Loader } from "../loader/Loader";
@@ -12,22 +12,27 @@ export const FlowerPage = () => {
   const [packages, setPackages] = useState([]);
   const [selectedPackage, setSelectedPackage] = useState(""); // Если упаковка не выбрана — пустая строка
   const [typeName, setTypeName] = useState("");
-  const [quantity, setQuantity] = useState(""); // Начинаем с пустой строки
+  const [quantity, setQuantity] = useState(1); // Теперь по умолчанию 1
+
   const [quantityError, setQuantityError] = useState("");
   const [orderError, setOrderError] = useState("");
 
   const quantityInputRef = useRef(null);
 
-  // Отключаем изменение через колесико
+  // Отключаем изменение через колесико мыши
   useEffect(() => {
-    const inputElem = quantityInputRef.current;
-    if (inputElem) {
+    if (quantityInputRef.current) {
       const handleWheel = (event) => {
-        event.preventDefault();
+        if (document.activeElement === quantityInputRef.current) {
+          event.preventDefault(); // Запрещает изменение значения
+        }
       };
-      inputElem.addEventListener("wheel", handleWheel, { passive: false });
+      quantityInputRef.current.addEventListener("wheel", handleWheel, {
+        passive: false,
+      });
+
       return () => {
-        inputElem.removeEventListener("wheel", handleWheel);
+        quantityInputRef.current.removeEventListener("wheel", handleWheel);
       };
     }
   }, []);
@@ -39,24 +44,45 @@ export const FlowerPage = () => {
       .then((data) => setFlower(data))
       .catch((error) => console.error("Ошибка загрузки цветка:", error));
 
-    // Загружаем рекомендации по уходу
-    fetch(`/api/recommendation/flower/${id}`)
-      .then((res) => res.json())
-      .then((data) => setRecommendation(data))
-      .catch((error) => console.error("Ошибка загрузки рекомендаций:", error));
-
     // Загружаем список упаковок
     fetch(`/api/package`)
       .then((res) => res.json())
       .then((data) => setPackages(data))
       .catch((error) => console.error("Ошибка загрузки упаковки:", error));
-
-    // Загружаем название типа цветка
-    fetch(`/api/flower/${id}/type_name`)
-      .then((res) => res.json())
-      .then((data) => setTypeName(data.type_name))
-      .catch((error) => console.error("Ошибка загрузки типа цветка:", error));
   }, [id]);
+
+  useEffect(() => {
+    if (flower) {
+      // Запрашиваем данные типа цветка через API
+      fetch(`/api/flower_type/${flower.flower_type_id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.name) {
+            setTypeName(data.name); // Сохраняем название типа цветка
+          } else {
+            throw new Error("Тип цветка не найден");
+          }
+        })
+        .catch((error) => console.error("Ошибка загрузки типа цветка:", error));
+    }
+  }, [flower]);
+
+  useEffect(() => {
+    if (flower) {
+      fetch(`/api/recommendation/flower/${flower.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.description) {
+            setRecommendation(data.description);
+          } else {
+            throw new Error("Описание рекомендации отсутствует");
+          }
+        })
+        .catch((error) =>
+          console.error("Ошибка загрузки рекомендации:", error)
+        );
+    }
+  }, [flower]);
 
   // Если упаковки загружены, и ничего не выбрано, устанавливаем упаковку по умолчанию
   useEffect(() => {
@@ -65,7 +91,7 @@ export const FlowerPage = () => {
     }
   }, [packages, selectedPackage]);
 
-  if (!flower || !recommendation) {
+  if (!flower) {
     return <Loader />;
   }
 
@@ -163,26 +189,30 @@ export const FlowerPage = () => {
           <div className={styles.order_input}>
             <h3 className={styles.amount}>Название: {flower.name}</h3>
             <h3 className={styles.amount}>
-              Тип: {typeName?.flower_type?.name || "Неизвестный тип"}
+              Тип: {typeName || "Неизвестный тип"}
             </h3>
             <div className={styles.description}>
               <h3>Описание: {flower.description}</h3>
             </div>
-            <label htmlFor="amount" className={styles.amount}>
-              Количество:
-            </label>
-            <input
-              type="number"
-              id="amount"
-              placeholder="Введите количество"
-              value={quantity}
-              onChange={handleQuantityChange}
-              onWheel={(e) => e.preventDefault()}
-              ref={quantityInputRef}
-            />
-            {quantityError && (
-              <p style={{ color: "red", fontSize: "18px" }}>{quantityError}</p>
-            )}
+            <div className={styles.quantity}>
+              <label htmlFor="amount" className={styles.amount}>
+                Количество:
+              </label>
+              <input
+                type="number"
+                id="amount"
+                placeholder="Введите количество"
+                value={quantity}
+                onChange={handleQuantityChange}
+                ref={quantityInputRef} // Добавляем ref
+              />
+
+              {quantityError && (
+                <p style={{ color: "red", fontSize: "18px" }}>
+                  {quantityError}
+                </p>
+              )}
+            </div>
 
             <h3>Упаковка</h3>
             {packages.map((pkg) => (
@@ -202,13 +232,18 @@ export const FlowerPage = () => {
           </div>
         </div>
 
+        {/* Блок вывода рекомендаций по уходу */}
         <div className={styles.description}>
           <h2>Рекомендации по уходу</h2>
-          <p>{recommendation.description}</p>
+          {recommendation ? (
+            <p className={styles.phar}>{recommendation}</p>
+          ) : (
+            <p>Рекомендаций пока нет</p>
+          )}
         </div>
 
         <div className={styles.results}>
-          <h2>Цена: {totalPrice.toFixed(2)} </h2>
+          <h2>Цена: {totalPrice.toFixed(2)}</h2>
           <div onClick={handleOrder}>
             <ButtonLight>Оформить заказ</ButtonLight>
           </div>

@@ -58,3 +58,7 @@
   display: flex;
   justify-content: space-between;
 }
+
+.phar {
+  text-align: justify;
+}
