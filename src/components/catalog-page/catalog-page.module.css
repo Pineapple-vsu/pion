@@ -27,7 +27,6 @@
 }
 
 .right {
-  /* padding: 0 40px; */
   width: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);

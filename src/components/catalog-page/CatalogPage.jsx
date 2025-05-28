@@ -2,6 +2,7 @@ import styles from "./catalog-page.module.css";
 import { useEffect, useState } from "react";
 import { ButtonDark } from "../buttons";
 import { FlowerCard } from "../flower-card/FlowerCard";
+import { Loader } from "../loader/Loader";
 
 export const CatalogPage = () => {
   const [flowers, setFlowers] = useState([]);
@@ -11,6 +12,7 @@ export const CatalogPage = () => {
   const [quantityFilter, setQuantityFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
   const [weeklyFilter, setWeeklyFilter] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const resetFilters = () => {
     setTypeFilter("");
@@ -22,6 +24,7 @@ export const CatalogPage = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     console.log("Запрос на сервер с фильтрами:", {
       typeFilter,
@@ -59,57 +62,10 @@ export const CatalogPage = () => {
       setFlowers(filteredFlowers);
     } catch (error) {
       console.error("Ошибка запроса:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  //одна сортировка
-  // const handleSearch = async (e) => {
-  //   e.preventDefault();
-
-  //   console.log("Запрос на сервер с фильтром:", {
-  //     typeFilter,
-  //     quantityFilter,
-  //     nameFilter,
-  //     weeklyFilter,
-  //   });
-
-  //   let url = "/api/flower"; // Базовый маршрут
-
-  //   if (nameFilter) {
-  //     url = `/api/flower/search/${nameFilter}`;
-  //   } else if (typeFilter) {
-  //     url = `/api/flower/type/${typeFilter}`;
-  //   } else if (quantityFilter) {
-  //     url = `/api/flower/stock/${quantityFilter}`;
-  //   } else if (weeklyFilter) {
-  //     url = `/api/flower/weekly`;
-  //   }
-
-  //   try {
-  //     const res = await fetch(url);
-  //     const filteredFlowers = await res.json();
-
-  //     console.log("Полученные данные от сервера:", filteredFlowers);
-  //     setFlowers(filteredFlowers);
-  //   } catch (error) {
-  //     console.error("Ошибка запроса:", error);
-  //   }
-  // };
-
-  //без сортировки
-  // useEffect(() => {
-  //   fetch("/api/flower", {
-  //     headers: {
-  //       "content-type": "application/json",
-  //     },
-  //     method: "GET",
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       console.log(data);
-  //       setFlowers(data);
-  //     });
-  // }, []);
 
   useEffect(() => {
     fetch("/api/flower")
@@ -118,8 +74,19 @@ export const CatalogPage = () => {
         console.log(data);
         setAllFlowers(data);
         setFlowers(data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Ошибка загрузки:", error);
       });
   }, []);
+  if (isLoading) {
+    return (
+      <section>
+        <Loader></Loader>
+      </section>
+    );
+  }
 
   return (
     <section>

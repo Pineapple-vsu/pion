@@ -8,12 +8,10 @@ import * as yup from "yup";
 import { Form } from "../form/Form";
 import { useLocation } from "react-router-dom";
 
-// Рассчитаем завтрашнюю дату (без времени)
 const tomorrow = new Date();
 tomorrow.setDate(tomorrow.getDate() + 1);
 tomorrow.setHours(0, 0, 0, 0);
 
-// Схема валидации (все сообщения на русском)
 const schema = yup.object().shape({
   personName: yup.string().required("Введите имя"),
   personPhone: yup
@@ -35,10 +33,9 @@ const schema = yup.object().shape({
 });
 
 export const OrderPage = () => {
-  // Состояние, показывающее, что форма успешно отправлена
   const [submitted, setSubmitted] = useState(false);
   const { state } = useLocation();
-  const posyId = state?.posyId; // Получаем posyId, переданный с FlowerPage
+  const posyId = state?.posyId;
 
   const {
     register,
@@ -52,7 +49,6 @@ export const OrderPage = () => {
   const onSubmit = (data) => {
     console.log("Форма отправлена", data);
 
-    // Преобразуем дату доставки: если deliveryDate уже объект Date, то извлекаем строку "YYYY-MM-DD"
     let deliveryDateStr;
     if (data.deliveryDate instanceof Date) {
       deliveryDateStr = data.deliveryDate.toISOString().split("T")[0];
@@ -60,23 +56,19 @@ export const OrderPage = () => {
       deliveryDateStr = data.deliveryDate;
     }
 
-    // Если время содержит только часы и минуты, добавляем секунды
     let deliveryTimeStr = data.deliveryTime;
     if (deliveryTimeStr.split(":").length === 2) {
       deliveryTimeStr += ":00";
     }
 
-    // Объединяем дату и время в строку ISO
     const orderDateTime = new Date(
       `${deliveryDateStr}T${deliveryTimeStr}`
     ).toISOString();
 
-    // Формируем объект заказа в соответствии с моделью Order,
-    // подставляя полученный posyId вместо null
     const orderPayload = {
       order_data: orderDateTime,
-      status_id: 1, // По умолчанию "Ожидается обработка"
-      posy_id: posyId, // Используем posyId, полученный с предыдущей страницы
+      status_id: 1,
+      posy_id: posyId,
       telephone: data.personPhone,
       name_people: data.personName,
       delivery: data.addressType === "delivery",
@@ -107,7 +99,6 @@ export const OrderPage = () => {
       });
   };
 
-  // Если заказ создан успешно, отображаем экран подтверждения
   if (submitted) {
     return (
       <Form>
@@ -115,19 +106,17 @@ export const OrderPage = () => {
           <div className={styles.image}></div>
           <div className={styles.right}>
             <h2>Заказ оформлен!</h2>
-            <p>Спасибо за покупку!</p>
           </div>
         </div>
         <Link to="/" style={{ textDecoration: "none" }}>
           <ButtonDark onClick={() => setSubmitted(false)}>
-            Вернуться на главную
+            На главную
           </ButtonDark>
         </Link>
       </Form>
     );
   }
 
-  // Отображаем форму для создания заказа
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Form className={styles.form}>

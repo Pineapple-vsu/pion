@@ -3,14 +3,14 @@ import { useLocation } from "react-router-dom";
 
 function ScrollToHash() {
   const location = useLocation();
-  const hasNavigated = useRef(false); // Проверяем, была ли навигация
+  const hasNavigated = useRef(false);
 
   useEffect(() => {
     if (hasNavigated.current && location.hash) {
       const element = document.getElementById(location.hash.replace("#", ""));
       element?.scrollIntoView({ behavior: "smooth" });
     }
-    hasNavigated.current = true; // Устанавливаем флаг после первой навигации
+    hasNavigated.current = true;
   }, [location]);
 
   return null;

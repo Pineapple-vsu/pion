@@ -6,6 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Form } from "../form/Form";
 import { Banner, Sails, Info, About, Contacts, Weekly } from "./components";
+import { useState } from "react";
 
 const schema = yup
   .object({
@@ -25,18 +26,63 @@ export const MainPage = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
-    mode: "onBlur", // валидация при уходе с поля
+    mode: "onBlur",
   });
+  const [submitted, setSubmitted] = useState(false);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log("Форма отправлена", data);
-    alert("Мы получили ваш вопрос, спасибо!");
-    // Здесь можно отправить данные на сервер (например, с fetch или axios)
-  };
 
+    try {
+      const response = await fetch("/api/question", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: data.personName,
+          email: data.personMail,
+          question: data.question,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Ошибка при отправке вопроса");
+      }
+
+      const result = await response.json();
+      console.log("Вопрос добавлен в базу:", result);
+      reset();
+      setSubmitted(true);
+    } catch (error) {
+      console.error("Ошибка:", error);
+      alert("Ошибка при отправке вопроса, попробуйте снова.");
+    }
+  };
+  if (submitted) {
+    return (
+      <>
+        <Banner />
+        <Info />
+        <Sails />
+        <About />
+        <Contacts />
+        <Weekly />
+        <Form>
+          <div className={styles.container}>
+            <div className={styles.image}></div>
+            <div className={styles.right}>
+              <h2>Вопрос отправлен!</h2>
+            </div>
+          </div>
+        </Form>
+      </>
+    );
+  }
   return (
     <>
       <Banner />

@@ -179,13 +179,12 @@ textarea {
 }
 
 select option:hover {
-  background-color: #d9adc5 !important; /* Цвет фона при наведении */
-  color: #000; /* Цвет текста */
+  background-color: #d9adc5 !important;
+  color: #000;
 }
 
 select option {
-  /* background-color: #d9adc5; Цвет фона при наведении */
-  color: #000; /* Цвет текста */
+  color: #000;
 }
 
 input[type="checkbox"] {
@@ -216,14 +215,13 @@ label {
   font-weight: bold;
 }
 
-/* Сброс стандартного вида */
 input[type="radio"] {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   width: 20px;
   height: 20px;
-  border: 2px solid #ccc;
+  border: 2px solid #d9adc5;
   border-radius: 50%;
   cursor: pointer;
   margin-right: 5px;
@@ -234,4 +232,7 @@ input[type="radio"] {
 input[type="radio"]:checked {
   background-color: #d9adc5;
   border-color: #d9adc5;
+}
+
+@media (max-width: 1440px) {
 }
